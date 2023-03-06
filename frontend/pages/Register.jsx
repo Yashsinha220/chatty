@@ -1,26 +1,68 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../src/index.css";
+import { registerRoute } from "../utils/ApiRoutes";
+import axios from "axios";
 
 function Register() {
   const navigate = useNavigate();
-  const [value , setvalue] = useState({
-    username : "",
-    email : "",
-    password : "",
-    confirmPassword : "",
+  const [value, setvalue] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
+  useEffect(()=>{
+    if(localStorage.getItem("chat-app-user")){
+      navigate('/')
+    }
 
-  const handlechange = (e)=>{
-    setvalue({...value , [e.target.name] : e.target.value});
-  }
+  }  , []);
 
-  const handlesubmit =  async (e)=>{
+  const handlevalidation = () => {
+    const { password, confirmPassword, username, email } = value;
+
+    if (password != confirmPassword) {
+      // used to put the error
+      alert("password and confirm password should be same");
+
+      return false;
+    } else if (username.length < 3) {
+      alert('Username should be greater than three character');
+      return false;
+      // at that time you meet the condition get out
+    } else if (password.length < 8) {
+      alert("Password should be  equal or greater than 8 characters");
+      return false;
+    } else if (email === "") {
+      alert("email is required ");
+    }
+
+    return true;
+  };
+
+  const handlechange = (e) => {
+    setvalue({ ...value, [e.target.name]: e.target.value });
+  };
+
+  const handlesubmit = async (e) => {
     e.preventDefault();
-    console.log(value);
-    
-  }
+
+    // validating that user had enter the correct or not
+    if (handlevalidation()) {
+      const { username, email, password, confirmPassword } = value;
+
+      const { data } = await axios.post(registerRoute, {
+        username: username,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+      });
+
+      console.log(data);
+    }
+  };
   return (
     <div
       style={{
@@ -36,7 +78,7 @@ function Register() {
     >
       <form
         onSubmit={(event) => {
-          handlesubmit(event)
+          handlesubmit(event);
         }}
         style={{
           display: "flex",
@@ -62,25 +104,37 @@ function Register() {
           type="text"
           name="username"
           placeholder="username"
-          onChange={(e) => {handlechange(e)}}
+          onChange={(e) => {
+            handlechange(e);
+          }}
+          autoComplete="on"
         />
         <input
           type="email"
           name="email"
           placeholder="email"
-          onChange={(e) => {handlechange(e)}}
+          onChange={(e) => {
+            handlechange(e);
+          }}
+          autoComplete="on"
         />
         <input
           type="password"
           name="password"
           placeholder="password"
-          onChange={(e) => {handlechange(e)}}
+          onChange={(e) => {
+            handlechange(e);
+          }}
+          autoComplete="on"
         />
         <input
           type="password"
           name="confirmPassword"
           placeholder="Confirm Password"
-          onChange={(e) => {handlechange(e)}}
+          onChange={(e) => {
+            handlechange(e);
+          }}
+          autoComplete="on"
         />
         <button type="submit">Create Users</button>
 

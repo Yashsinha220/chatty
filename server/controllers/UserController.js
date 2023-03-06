@@ -7,12 +7,12 @@ const register = async (req , res, next)=>{
     try {
         const {username , email , password, confirmPassword} = req.body;
 
-        const usernamecheck = await User.findone({username : username});
+        const usernamecheck = await User.findOne({username : username});
         if(usernamecheck){
             return res.json({msg : 'user already exist' , status : false})
         }
 
-        const emailcheck = await User.findone({email: email});
+        const emailcheck = await User.findOne({email: email});
         if(emailcheck){
             res.json({msg : 'email already exist in the system' , status : false})
         }  
@@ -40,4 +40,34 @@ const register = async (req , res, next)=>{
 }
 
 
-module.exports = {register}
+const login = async (req , res , next)=>{
+
+    const {email , password } = req.body();
+    try {
+        const user = await User.findOne({email : email})
+        if(!user){
+            return res.json({msg : "Incorrect Username or password" , status : false});
+        }
+
+        const isPassword = await bcrypt.compare(password , user.password);
+        if(!isPassword){
+            return res.json({msg : 'Incorrect username or password' , status: false});
+        }
+
+        else{
+            res.json({
+                status: true,
+                email : user.email,
+                username : user.username,
+                id : user._id
+            })
+        }
+        
+    } catch (error) {
+        next(error)
+        
+    }
+}
+
+
+module.exports = {register , login}
