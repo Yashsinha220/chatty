@@ -4,6 +4,10 @@ import "../src/index.css";
 import { registerRoute } from "../utils/ApiRoutes";
 import axios from "axios";
 
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
+
+
 function Register() {
   const navigate = useNavigate();
   const [value, setvalue] = useState({
@@ -12,6 +16,22 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
+
+  const toastOption = {
+    position: toast.POSITION.BOTTOM_RIGHT,
+    autoClose: 8000,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "dark",
+  };
+  const toastOptionSuccess = {
+    position: toast.POSITION.BOTTOM_RIGHT,
+    autoClose: 8000,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "light",
+  };
+
 
   useEffect(()=>{
     if(localStorage.getItem("chat-app-user")){
@@ -25,18 +45,24 @@ function Register() {
 
     if (password != confirmPassword) {
       // used to put the error
-      alert("password and confirm password should be same");
+      toast.error("password and confirm password should be same", toastOption);
 
       return false;
     } else if (username.length < 3) {
-      alert('Username should be greater than three character');
+      toast.error(
+        "Username should be greater than three character",
+        toastOption
+      );
       return false;
       // at that time you meet the condition get out
     } else if (password.length < 8) {
-      alert("Password should be  equal or greater than 8 characters");
+      toast.error(
+        "Password should be  equal or greater than 8 characters",
+        toastOption
+      );
       return false;
     } else if (email === "") {
-      alert("email is required ");
+      toast.error("email is required ", toastOption);
     }
 
     return true;
@@ -60,10 +86,21 @@ function Register() {
         confirmPassword: confirmPassword,
       });
 
-      console.log(data);
+      if (data.status === false) {
+        toast.error(data.msg, toastOption);
+      }
+
+      // console.log(data);
+
+      if (data.status === true) {
+
+
+        toast.success("Account Created SuccessFully", toastOptionSuccess);
+      }
     }
   };
   return (
+    <>
     <div
       style={{
         height: "100vh",
@@ -143,6 +180,10 @@ function Register() {
         </span>
       </form>
     </div>
+
+    <ToastContainer></ToastContainer>
+
+    </>
   );
 }
 
