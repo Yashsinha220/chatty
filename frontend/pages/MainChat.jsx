@@ -57,8 +57,10 @@ function MainChat() {
         }}
       >
         <Contact contacts = {contacts} currentUser = {currentUser}></Contact>
+
+        {/* this is the main container */}
         
-        <div style={{ border: "2px solid purple", flex: 2 }}> </div>
+        <div style={{display : 'flex' , flex : 2}}> </div>
       </div>
     </div>
   );

@@ -35,6 +35,7 @@ const getAllMessage = async (req, res, next) => {
         }).sort({updatedAt : 1});
 
         const projectMessage = messages.map((msg)=>{
+          // console.log(msg.sender);
             return {
                 fromself : msg.sender.toString()===from,
                 message : msg.message.text,
